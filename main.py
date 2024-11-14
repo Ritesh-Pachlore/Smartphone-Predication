@@ -13,7 +13,7 @@ import os
 
 # Load the dataset (Replace this with a file uploader in Streamlit app if deploying)
 file_path = 'data1.csv'  # Use 'data1.csv' without a path if using file uploader on Streamlit
-df = pd.read_csv(file_path)
+df = pd.read_csv('data1.csv')
 
 # Clean 'Price in Rupees' column by removing commas and handling non-numeric values
 df['Price in Rupees'] = df['Price in Rupees'].replace({',': ''}, regex=True)
