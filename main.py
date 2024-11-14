@@ -91,17 +91,17 @@ if voting_r2_score > best_score:
 os.makedirs('models', exist_ok=True)
 
 # Save the best model, scaler, label encoders, and feature columns using pickle
-with open('models/best_model.pkl', 'wb') as model_file:
+with open('best_model.pkl', 'wb') as model_file:
     pickle.dump(best_model, model_file)
 
-with open('models/scaler.pkl', 'wb') as scaler_file:
+with open('scaler.pkl', 'wb') as scaler_file:
     pickle.dump(scaler, scaler_file)
 
-with open('models/label_encoders.pkl', 'wb') as encoders_file:
+with open('label_encoders.pkl', 'wb') as encoders_file:
     pickle.dump(label_encoders, encoders_file)
 
 # Save the feature names in the same order used for training
-with open('models/feature_columns.pkl', 'wb') as feature_columns_file:
+with open('feature_columns.pkl', 'wb') as feature_columns_file:
     pickle.dump(X.columns.tolist(), feature_columns_file)
 
 print("\nBest model, scaler, label encoders, and feature columns have been saved successfully!")
