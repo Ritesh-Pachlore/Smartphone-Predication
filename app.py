@@ -24,7 +24,7 @@ st.markdown("Estimate smartphone prices based on features")
 st.markdown("### Optional: Upload 'data1.csv' (if needed for verification)")
 uploaded_file = st.file_uploader("Upload data1.csv", type="csv")
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
+    df = pd.read_csv('data1.csv')
     st.write("File uploaded successfully.")
 
 # Input fields
