@@ -4,21 +4,31 @@ import pandas as pd
 import math
 
 # Load the saved model, scaler, label encoders, and feature columns
-with open("E:/SEM V/ML CA2/models/best_model.pkl ", 'rb') as model_file:
+with open("models/best_model.pkl", 'rb') as model_file:
     model = pickle.load(model_file)
 
-with open("E:/SEM V/ML CA2/models/scaler.pkl", 'rb') as scaler_file:
+with open("models/scaler.pkl", 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 
-with open("E:/SEM V/ML CA2/models/label_encoders.pkl", 'rb') as encoders_file:
+with open("models/label_encoders.pkl", 'rb') as encoders_file:
     label_encoders = pickle.load(encoders_file)
 
-with open("E:/SEM V/ML CA2/models/feature_columns.pkl", 'rb') as feature_columns_file:
+with open("models/feature_columns.pkl", 'rb') as feature_columns_file:
     feature_columns = pickle.load(feature_columns_file)
 
-# Load the external CSS styling file
-with open('style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+# Load optional 'data1.csv' if necessary
+st.markdown("### Optional: Upload 'data1.csv' (if needed)")
+uploaded_file = st.file_uploader("Upload the data file (data1.csv)", type="csv")
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
+    st.write("File uploaded successfully.")
+
+# Load the external CSS styling file (Optional)
+try:
+    with open('style.css') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+except FileNotFoundError:
+    st.warning("Custom CSS file 'style.css' not found. Proceeding with default styling.")
 
 # Streamlit interface with styled header
 st.markdown('<div class="title">Smartphone Price Prediction</div>', unsafe_allow_html=True)
@@ -66,7 +76,7 @@ if st.button('Predict Price'):
 
     # Predict the price using the trained model
     predicted_price = model.predict(scaled_input)[0]
-    expected_price=math.trunc(predicted_price/2)
+    expected_price = math.trunc(predicted_price / 2)
 
     # Display the predicted price with styling
-    st.markdown(f'<div class="prediction-text">Predicted Price: ₹{predicted_price:f}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="prediction-text">Predicted Price: ₹{predicted_price:.2f}</div>', unsafe_allow_html=True)
