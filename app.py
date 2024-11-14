@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 import math
 
-# Load the saved model, scaler, label encoders, and feature columns
+# Load the model, scaler, label encoders, and feature columns
 with open("models/best_model.pkl", 'rb') as model_file:
     model = pickle.load(model_file)
 
@@ -16,67 +16,42 @@ with open("models/label_encoders.pkl", 'rb') as encoders_file:
 with open("models/feature_columns.pkl", 'rb') as feature_columns_file:
     feature_columns = pickle.load(feature_columns_file)
 
-# Load optional 'data1.csv' if necessary
-st.markdown("### Optional: Upload 'data1.csv' (if needed)")
-uploaded_file = st.file_uploader("Upload the data file (data1.csv)", type="csv")
+# Streamlit UI
+st.title("Smartphone Price Prediction")
+st.markdown("Estimate smartphone prices based on features")
+
+# Optional: Upload the CSV dataset if necessary for reference
+st.markdown("### Optional: Upload 'data1.csv' (if needed for verification)")
+uploaded_file = st.file_uploader("Upload data1.csv", type="csv")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
     st.write("File uploaded successfully.")
 
-# Load the external CSS styling file (Optional)
-try:
-    with open('style.css') as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-except FileNotFoundError:
-    st.warning("Custom CSS file 'style.css' not found. Proceeding with default styling.")
+# Input fields
+processor = st.selectbox('Select Processor', label_encoders['Processor'].classes_)
+camera_details = st.selectbox('Select Camera Details', label_encoders['Camera_details'].classes_)
+storage_details = st.selectbox('Select Storage', label_encoders['Storage_details'].classes_)
+screen_size = st.selectbox('Select Screen Size', label_encoders['Screen_size'].classes_)
+battery_details = st.selectbox('Select Battery', label_encoders['Battery_details'].classes_)
 
-# Streamlit interface with styled header
-st.markdown('<div class="title">Smartphone Price Prediction</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Estimate smartphone prices based on features</div>', unsafe_allow_html=True)
-
-# Function to encode input data using the label encoders
+# Function to encode input data
 def encode_input(data, column):
-    if data in label_encoders[column].classes_:
-        return label_encoders[column].transform([data])[0]
-    else:
-        st.warning(f"Warning: The label '{data}' for column '{column}' is unseen. Using default encoding.")
-        return label_encoders[column].transform([label_encoders[column].classes_[0]])[0]
+    return label_encoders[column].transform([data])[0]
 
-# Input fields section
-st.markdown('<div class="section-title">Select Smartphone Specifications:</div>', unsafe_allow_html=True)
-processor = st.selectbox('Select Processor', label_encoders['Processor'].classes_.tolist())
-camera_details = st.selectbox('Select Camera Details', label_encoders['Camera_details'].classes_.tolist())
-storage_details = st.selectbox('Select Storage', label_encoders['Storage_details'].classes_.tolist())
-screen_size = st.selectbox('Select Screen Size', label_encoders['Screen_size'].classes_.tolist())
-battery_details = st.selectbox('Select Battery', label_encoders['Battery_details'].classes_.tolist())
-
-# Encode the inputs
-encoded_processor = encode_input(processor, 'Processor')
-encoded_camera_details = encode_input(camera_details, 'Camera_details')
-encoded_storage_details = encode_input(storage_details, 'Storage_details')
-encoded_screen_size = encode_input(screen_size, 'Screen_size')
-encoded_battery_details = encode_input(battery_details, 'Battery_details')
-
-# Prepare the data for prediction and ensure it has the correct feature names and order
+# Encode inputs
 input_data = pd.DataFrame({
-    'Processor': [encoded_processor],
-    'Camera_details': [encoded_camera_details],
-    'Storage_details': [encoded_storage_details],
-    'Screen_size': [encoded_screen_size],
-    'Battery_details': [encoded_battery_details]
+    'Processor': [encode_input(processor, 'Processor')],
+    'Camera_details': [encode_input(camera_details, 'Camera_details')],
+    'Storage_details': [encode_input(storage_details, 'Storage_details')],
+    'Screen_size': [encode_input(screen_size, 'Screen_size')],
+    'Battery_details': [encode_input(battery_details, 'Battery_details')]
 })
 
-# Reorder columns based on feature_columns to match training order
+# Reorder columns and scale the data
 input_data = input_data.reindex(columns=feature_columns)
+scaled_input = scaler.transform(input_data)
 
-# Button to trigger prediction
-if st.button('Predict Price'):
-    # Scale the input data
-    scaled_input = scaler.transform(input_data)
-
-    # Predict the price using the trained model
+# Prediction
+if st.button("Predict Price"):
     predicted_price = model.predict(scaled_input)[0]
-    expected_price = math.trunc(predicted_price / 2)
-
-    # Display the predicted price with styling
-    st.markdown(f'<div class="prediction-text">Predicted Price: ₹{predicted_price:.2f}</div>', unsafe_allow_html=True)
+    st.write(f"Predicted Price: ₹{predicted_price:.2f}")
