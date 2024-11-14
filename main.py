@@ -11,8 +11,8 @@ import catboost as cb
 import pickle
 import os
 
-# Load the dataset
-file_path = r'E:\SEM V\ML CA2\data1.csv'  # Update this path as needed
+# Load the dataset (Replace this with a file uploader in Streamlit app if deploying)
+file_path = 'data1.csv'  # Use 'data1.csv' without a path if using file uploader on Streamlit
 df = pd.read_csv(file_path)
 
 # Clean 'Price in Rupees' column by removing commas and handling non-numeric values
