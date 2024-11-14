@@ -4,16 +4,16 @@ import pandas as pd
 import math
 
 # Load the model, scaler, label encoders, and feature columns
-with open("models/best_model.pkl", 'rb') as model_file:
+with open("best_model.pkl", 'rb') as model_file:
     model = pickle.load(model_file)
 
-with open("models/scaler.pkl", 'rb') as scaler_file:
+with open("scaler.pkl", 'rb') as scaler_file:
     scaler = pickle.load(scaler_file)
 
-with open("models/label_encoders.pkl", 'rb') as encoders_file:
+with open("label_encoders.pkl", 'rb') as encoders_file:
     label_encoders = pickle.load(encoders_file)
 
-with open("models/feature_columns.pkl", 'rb') as feature_columns_file:
+with open("feature_columns.pkl", 'rb') as feature_columns_file:
     feature_columns = pickle.load(feature_columns_file)
 
 # Streamlit UI
